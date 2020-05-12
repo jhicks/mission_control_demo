@@ -12,9 +12,8 @@ defmodule MissionControl.Application do
       # Start the PubSub system
       {Phoenix.PubSub, name: MissionControl.PubSub},
       # Start the Endpoint (http/https)
-      MissionControlWeb.Endpoint
-      # Start a worker by calling: MissionControl.Worker.start_link(arg)
-      # {MissionControl.Worker, arg}
+      MissionControlWeb.Endpoint,
+      MissionControl.FlightControlSupervisor
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
