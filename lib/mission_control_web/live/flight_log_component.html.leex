@@ -1,0 +1,24 @@
+<h2>Flight Log</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Timestamp</th>
+      <th>Distance</th>
+      <th>Speed</th>
+      <th>Fuel Used</th>
+      <th>Distance Remaining</th>
+    </tr>
+  </thead>
+  <tbody id="flight-log-data" phx-update="prepend">
+    <%= for {timestamp, segment, distance_remaining} <- @flight_log do %>
+      <tr id="<%= "status-#{DateTime.to_unix(timestamp, :millisecond)}" %>">
+        <td><%= timestamp %></td>
+        <td><%= segment.distance %></td>
+        <td><%= segment.speed %></td>
+        <td><%= segment.fuel_used %></td>
+        <td><%= distance_remaining %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

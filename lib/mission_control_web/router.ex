@@ -18,6 +18,7 @@ defmodule MissionControlWeb.Router do
     pipe_through :browser
 
     live "/", PageLive, :index
+    live "/mission_control", MissionControlLive
   end
 
   # Other scopes may use custom stacks.
