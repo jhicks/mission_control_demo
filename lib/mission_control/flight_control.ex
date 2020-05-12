@@ -1,5 +1,5 @@
 defmodule MissionControl.FlightControl do
-  use GenServer
+  use GenServer, restart: :transient
 
   alias MissionControl.{MissionPlan, FlightSegment}
 
