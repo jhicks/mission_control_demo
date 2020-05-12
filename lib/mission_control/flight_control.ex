@@ -15,7 +15,8 @@ defmodule MissionControl.FlightControl do
 
     state = %{
       plan: plan,
-      distance_remaining: plan.distance
+      distance_remaining: plan.distance,
+      callback_pid: Keyword.fetch!(args, :callback_pid)
     }
 
     enqueue_tick()
@@ -25,6 +26,11 @@ defmodule MissionControl.FlightControl do
 
   def handle_info(:tick, %{distance_remaining: distance_remaining} = state)
       when distance_remaining == 0 do
+
+    if Process.alive?(state.callback_pid) do
+      send(state.callback_pid, :flight_completed)
+    end
+
     {:stop, :normal, state}
   end
 
@@ -34,7 +40,12 @@ defmodule MissionControl.FlightControl do
 
     new_plan = %{plan | distance: distance_remaining}
     segment = FlightSegment.calculate(new_plan)
-    state = %{state | distance_remaining: distance_remaining - segment.distance}
+    distance_remaining = distance_remaining - segment.distance
+    state = %{state | distance_remaining: distance_remaining}
+
+    if Process.alive?(state.callback_pid) do
+      send(state.callback_pid, {:flight_updated, segment, distance_remaining})
+    end
 
     {:noreply, state}
   end

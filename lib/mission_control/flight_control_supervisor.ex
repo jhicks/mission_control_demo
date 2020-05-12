@@ -7,10 +7,11 @@ defmodule MissionControl.FlightControlSupervisor do
     DynamicSupervisor.start_link(__MODULE__, init_args, name: __MODULE__)
   end
 
-  def start_child(%MissionPlan{} = mission_plan) do
+  def start_child(%MissionPlan{} = mission_plan, callback_pid \\ nil) do
     spec = {
       FlightControl,
       plan: mission_plan,
+      callback_pid: callback_pid
     }
     DynamicSupervisor.start_child(__MODULE__, spec)
   end
