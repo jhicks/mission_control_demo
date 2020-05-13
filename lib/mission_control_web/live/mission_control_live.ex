@@ -1,27 +1,44 @@
 defmodule MissionControlWeb.MissionControlLive do
   use MissionControlWeb, :live_view
 
-
   alias MissionControlWeb.FlightLogComponent
 
+  @impl true
   def mount(_params, _session, socket) do
-    {:ok, apply_action(socket, :flight_log)}
+    {:ok, apply_action(socket, :mission_setup)}
+  end
+
+  defp apply_action(socket, :mission_setup) do
+    socket
+    |> assign(:component, MissionControlWeb.MissionSetupComponent)
+    |> assign(:component_options, [id: MissionControlWeb.MissionSetupComponent])
   end
 
   defp apply_action(socket, :flight_log) do
-    plan = %MissionControl.MissionPlan{name: "Test", distance: 27, speed: 4, fuel_burn_rate: 3}
-    {:ok, _pid} = MissionControl.FlightControlSupervisor.start_child(plan, self())
+    {:ok, _pid} = MissionControl.FlightControlSupervisor.start_child(socket.assigns.plan, self())
     socket
     |> assign(:component, FlightLogComponent)
     |> assign(:component_options, flight_log_options())
   end
 
+  @impl true
+  def handle_info({:mission_setup_completed, plan}, socket) do
+    socket =
+      socket
+      |> assign(:plan, plan)
+      |> apply_action(:flight_log)
+
+    {:noreply, socket}
+  end
+
+  @impl true
   def handle_info({:flight_updated, segment, distance_remaining}, socket) do
     flight_status = {DateTime.utc_now, segment, distance_remaining}
     socket = assign(socket, :component_options, flight_log_options(flight_status))
     {:noreply, socket}
   end
 
+  @impl true
   def handle_info(:flight_completed, socket) do
     socket = assign(socket, :component_options, flight_log_options())
     {:noreply, socket}
