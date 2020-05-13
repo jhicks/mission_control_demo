@@ -14,6 +14,12 @@ defmodule MissionControlWeb.MissionControlLive do
     |> assign(:component_options, [id: MissionControlWeb.MissionSetupComponent])
   end
 
+  defp apply_action(socket, :launch_sequence) do
+    socket
+    |> assign(:component, MissionControlWeb.LaunchSequenceComponent)
+    |> assign(:component_options, [id: MissionControlWeb.LaunchSequenceComponent])
+  end
+
   defp apply_action(socket, :flight_log) do
     {:ok, _pid} = MissionControl.FlightControlSupervisor.start_child(socket.assigns.plan, self())
     socket
@@ -26,9 +32,14 @@ defmodule MissionControlWeb.MissionControlLive do
     socket =
       socket
       |> assign(:plan, plan)
-      |> apply_action(:flight_log)
+      |> apply_action(:launch_sequence)
 
     {:noreply, socket}
+  end
+
+  @impl true
+  def handle_info(:launch_sequence_completed, socket) do
+    {:noreply, apply_action(socket, :flight_log)}
   end
 
   @impl true
