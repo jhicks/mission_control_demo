@@ -1,6 +1,6 @@
 <h2>Launch Sequence</h2>
 
-<p><%= @stage %></p>
+<p><%= launch_sequence_prompt(@stage) %>?</p>
 
 <div>
   <button phx-click="step" phx-target="<%= @myself %>">Proceed</button>

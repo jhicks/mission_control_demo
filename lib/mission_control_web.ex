@@ -89,6 +89,8 @@ defmodule MissionControlWeb do
       import MissionControlWeb.ErrorHelpers
       import MissionControlWeb.Gettext
       alias MissionControlWeb.Router.Helpers, as: Routes
+
+      import MissionControlWeb.LiveHelpers
     end
   end
 
