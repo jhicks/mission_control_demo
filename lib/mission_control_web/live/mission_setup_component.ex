@@ -4,7 +4,9 @@ defmodule MissionControlWeb.MissionSetupComponent do
   alias MissionControlWeb.MissionSetupForm
 
   def mount(socket) do
-    changeset = MissionSetupForm.changeset()
+    changeset =
+      %{name: "Test", distance: 300, speed: 5, fuel_burn_rate: 3}
+      |> MissionSetupForm.changeset()
     {:ok, assign(socket, changeset: changeset)}
   end
 
